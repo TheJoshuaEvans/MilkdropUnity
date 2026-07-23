@@ -1,4 +1,4 @@
-# Milkstain
+# Milkdrop Unity (Fork of <a href=https://github.com/R-033/milkstain>Milkstain</a>)
 Implementation of Milkdrop Visualizer in Unity. Based on <a href=https://github.com/jberg/butterchurn>Butterchurn</a>.
 
 ![Screenshot](Screenshot.png)
