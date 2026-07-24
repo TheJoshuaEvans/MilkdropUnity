@@ -66,6 +66,16 @@ namespace Milkstain
 
         public AudioSource TargetAudio;
 
+        // Optional override for time-domain (waveform) samples, for callers whose AudioClip
+        // can't service AudioClip.GetData() - e.g. a streaming/procedural clip created via
+        // AudioClip.Create(stream: true, ...), which throws "Can't get data from streamed
+        // samples". When set, this is called instead of TargetAudio.clip.GetData(); it must fill
+        // the passed buffer with MaxSamples*2 interleaved stereo samples (oldest-first, same
+        // shape GetData() would produce) and return true, or return false to leave the buffer
+        // untouched for this frame. Leave null to keep the original GetData()-based behavior for
+        // ordinary (non-streaming) AudioClips.
+        public System.Func<float[], bool> TimeDomainSampleProvider;
+
         public Shader DefaultWarpShader;
         public Shader DefaultCompShader;
 
@@ -921,10 +931,17 @@ namespace Milkstain
 
         void UpdateAudioLevels()
         {
-            if (TargetAudio.clip)
+            bool gotTimeData = TimeDomainSampleProvider != null
+                ? TimeDomainSampleProvider(timeArray)
+                : TargetAudio.clip;
+
+            if (gotTimeData)
             {
-                TargetAudio.clip.GetData(timeArray, TargetAudio.timeSamples);
-                
+                if (TimeDomainSampleProvider == null)
+                {
+                    TargetAudio.clip.GetData(timeArray, TargetAudio.timeSamples);
+                }
+
                 for (int i = 0; i < MaxSamples; i++)
                 {
                     timeArrayL[i] = timeArray[i * 2];
