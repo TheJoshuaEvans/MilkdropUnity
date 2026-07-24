@@ -326,8 +326,16 @@ namespace MilkdropUnity
 
         public void Initialize()
         {
-            UnloadPresets();
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize");
+            var initializeStopwatch = System.Diagnostics.Stopwatch.StartNew();
 
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize.UnloadPresets");
+            UnloadPresets();
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.Initialize] UnloadPresets: {initializeStopwatch.ElapsedMilliseconds}ms");
+            initializeStopwatch.Restart();
+
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize.AllocArrays");
             blendingVertInfoA = new float[(MeshSize.x + 1) * (MeshSize.y + 1)];
             blendingVertInfoC = new float[(MeshSize.x + 1) * (MeshSize.y + 1)];
 
@@ -346,9 +354,17 @@ namespace MilkdropUnity
 
             var dotSprite = DotPrefab.GetComponent<SpriteRenderer>().sprite;
             var squareSprite = MotionVectorPrefab.GetComponent<SpriteRenderer>().sprite;
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.Initialize] AllocArrays: {initializeStopwatch.ElapsedMilliseconds}ms");
+            initializeStopwatch.Restart();
 
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize.UpdateResolution");
             UpdateResolution(Resolution);
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.Initialize] UpdateResolution: {initializeStopwatch.ElapsedMilliseconds}ms");
+            initializeStopwatch.Restart();
 
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize.NoiseTextures");
             TextureNoiseLQ = new Texture2D(256, 256, TextureFormat.RGBA32, false);
             TextureNoiseLQLite = new Texture2D(32, 32, TextureFormat.RGBA32, false);
             TextureNoiseMQ = new Texture2D(256, 256, TextureFormat.RGBA32, false);
@@ -374,7 +390,11 @@ namespace MilkdropUnity
             TexturePWNoiseLQ.filterMode = FilterMode.Point;
             TexturePWNoiseLQ.SetPixels32(TextureNoiseLQ.GetPixels32());
             TexturePWNoiseLQ.Apply();
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.Initialize] NoiseTextures: {initializeStopwatch.ElapsedMilliseconds}ms");
+            initializeStopwatch.Restart();
 
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize.InstantiateDots");
             Dots = new Transform[MaxSamples * 4];
             DotRenderers = new SpriteRenderer[MaxSamples * 4];
 
@@ -383,7 +403,11 @@ namespace MilkdropUnity
                 Dots[i] = Instantiate(DotPrefab, DotParent).transform;
                 DotRenderers[i] = Dots[i].GetComponent<SpriteRenderer>();
             }
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.Initialize] InstantiateDots: {initializeStopwatch.ElapsedMilliseconds}ms");
+            initializeStopwatch.Restart();
 
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize.InstantiateMotionVectors");
             MotionVectors = new Transform[MotionVectorsSize.x * MotionVectorsSize.y];
             MotionVectorRenderers = new SpriteRenderer[MotionVectorsSize.x * MotionVectorsSize.y];
 
@@ -392,14 +416,22 @@ namespace MilkdropUnity
                 MotionVectors[i] = Instantiate(MotionVectorPrefab, MotionVectorParent).transform;
                 MotionVectorRenderers[i] = MotionVectors[i].GetComponent<SpriteRenderer>();
             }
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.Initialize] InstantiateMotionVectors: {initializeStopwatch.ElapsedMilliseconds}ms");
+            initializeStopwatch.Restart();
 
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize.AudioArrays");
             timeArray = new float[MaxSamples * 2];
             timeArrayL = new float[MaxSamples];
             timeArrayR = new float[MaxSamples];
 
             freqArrayL = new float[MaxSamples];
             freqArrayR = new float[MaxSamples];
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.Initialize] AudioArrays: {initializeStopwatch.ElapsedMilliseconds}ms");
+            initializeStopwatch.Restart();
 
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize.BuildMeshes");
             TargetMeshWarp = new Mesh();
             Vector3[] vertices = new Vector3[(MeshSize.x + 1) * (MeshSize.y + 1)];
             for (int i = 0, y = 0; y <= MeshSize.y; y++)
@@ -489,12 +521,16 @@ namespace MilkdropUnity
                 }
             }
             TargetMeshComp.triangles = triangles;
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.Initialize] BuildMeshes: {initializeStopwatch.ElapsedMilliseconds}ms");
+            initializeStopwatch.Restart();
 
             BorderSideLeft.gameObject.SetActive(false);
             BorderSideRight.gameObject.SetActive(false);
             BorderSideTop.gameObject.SetActive(false);
             BorderSideBottom.gameObject.SetActive(false);
 
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize.AudioBuckets");
             int sampleRate = AudioSettings.outputSampleRate;
             float freqMultiplier = sampleRate * 0.5f;
             float bucketHz = freqMultiplier / MaxSamples;
@@ -525,6 +561,9 @@ namespace MilkdropUnity
 
             audioSampleStarts = new int[] { bassLow, bassHigh, midHigh };
             audioSampleStops = new int[] { bassHigh, midHigh, trebHigh };
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.Initialize] AudioBuckets: {initializeStopwatch.ElapsedMilliseconds}ms");
+            initializeStopwatch.Restart();
 
             if (!string.IsNullOrEmpty(PresetName))
             {
@@ -538,9 +577,15 @@ namespace MilkdropUnity
                 }
             }
 
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.Initialize.FirstPreset");
             PlayRandomPreset(0f);
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.Initialize] FirstPreset: {initializeStopwatch.ElapsedMilliseconds}ms");
+            initializeStopwatch.Restart();
 
             initialized = true;
+
+            UnityEngine.Profiling.Profiler.EndSample();
         }
 
         float fCubicInterpolate(float y0, float y1, float y2, float y3, float t)
@@ -758,6 +803,9 @@ namespace MilkdropUnity
                     {
                         if (weightedPresetSelection == null)
                         {
+                            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.PlayRandomPreset.BuildWeightedSelection");
+                            var weightedSelectionStopwatch = System.Diagnostics.Stopwatch.StartNew();
+
                             weightedPresetSelection = new List<int>();
 
                             for (int i = 0; i < PresetFiles.Length; i++)
@@ -769,6 +817,9 @@ namespace MilkdropUnity
                                     weightedPresetSelection.Add(i);
                                 }
                             }
+
+                            UnityEngine.Profiling.Profiler.EndSample();
+                            Debug.Log($"[Milkdrop.PlayRandomPreset] BuildWeightedSelection ({PresetFiles.Length} presets): {weightedSelectionStopwatch.ElapsedMilliseconds}ms");
                         }
 
                         ind = weightedPresetSelection[UnityEngine.Random.Range(0, weightedPresetSelection.Count)];
@@ -2208,8 +2259,10 @@ namespace MilkdropUnity
                 mat.SetMatrix("rot_rand4", Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f)), Vector3.one));
             }
 
+            UnityEngine.Profiling.Profiler.BeginSample("DrawWarp.CameraRender");
             TargetCamera.targetTexture = TempTexture;
             TargetCamera.Render();
+            UnityEngine.Profiling.Profiler.EndSample();
 
             UnityEngine.Profiling.Profiler.EndSample();
         }
@@ -3824,6 +3877,9 @@ namespace MilkdropUnity
 
         public static Preset LoadPreset(string file)
         {
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.LoadPreset.ParseText");
+            var loadPresetStopwatch = System.Diagnostics.Stopwatch.StartNew();
+
             var preset = new Preset();
 
             string[] lines = file.Split('\n');
@@ -4088,6 +4144,11 @@ namespace MilkdropUnity
                     }
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.LoadPreset] ParseText: {loadPresetStopwatch.ElapsedMilliseconds}ms");
+            loadPresetStopwatch.Restart();
+
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.LoadPreset.CompileEquations");
 
             try
             {
@@ -4169,6 +4230,8 @@ namespace MilkdropUnity
                     shape.FrameEquationCompiled = x => { };
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.LoadPreset] CompileEquations: {loadPresetStopwatch.ElapsedMilliseconds}ms");
 
             return preset;
         }
@@ -4336,6 +4399,9 @@ namespace MilkdropUnity
 
         public bool PlayPreset(int presetIndex, float transitionDuration)
         {
+            UnityEngine.Profiling.Profiler.BeginSample("Milkdrop.PlayPreset");
+            var playPresetStopwatch = System.Diagnostics.Stopwatch.StartNew();
+
             if (CurrentPreset != null && transitionDuration > 0f)
             {
                 CreateBlendPattern();
@@ -4354,6 +4420,8 @@ namespace MilkdropUnity
                 if (!string.IsNullOrEmpty(newPreset.Warp) || !string.IsNullOrEmpty(newPreset.Comp))
                 {
                     blending = false;
+                    UnityEngine.Profiling.Profiler.EndSample();
+                    Debug.Log($"[Milkdrop.PlayPreset] rejected (SkipCustomShaded), {playPresetStopwatch.ElapsedMilliseconds}ms wasted");
                     return false;
                 }
             }
@@ -4362,6 +4430,8 @@ namespace MilkdropUnity
                 if (string.IsNullOrEmpty(newPreset.Warp) && string.IsNullOrEmpty(newPreset.Comp))
                 {
                     blending = false;
+                    UnityEngine.Profiling.Profiler.EndSample();
+                    Debug.Log($"[Milkdrop.PlayPreset] rejected (SkipDefaultShaded), {playPresetStopwatch.ElapsedMilliseconds}ms wasted");
                     return false;
                 }
             }
@@ -4687,6 +4757,9 @@ namespace MilkdropUnity
             {
                 CurrentPreset.MaxBlurLevel = 0;
             }
+
+            UnityEngine.Profiling.Profiler.EndSample();
+            Debug.Log($"[Milkdrop.PlayPreset] accepted, total: {playPresetStopwatch.ElapsedMilliseconds}ms");
 
             return true;
         }
