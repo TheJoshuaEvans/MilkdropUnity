@@ -6,9 +6,9 @@ Implementation of Milkdrop Visualizer in Unity. Based on <a href=https://github.
 ## Usage
 
 ### Requirements
-Milkstain can be driven from any ```AudioSource``` as long as ```AudioClip``` is not compressed. Otherwise the time array will be filled with zeros.
+MilkdropUnity can be driven from any ```AudioSource``` as long as ```AudioClip``` is not compressed. Otherwise the time array will be filled with zeros.
 
-Milkstain requires it's own layer for isolated rendering. It's set up by default to use the last layer slot.
+MilkdropUnity requires it's own layer for isolated rendering. It's set up by default to use the last layer slot.
 
 ### Playing presets
 For visualizer to work, first you need to instantiate the prefab ```Milkdrop.prefab```. It has everything already set up.

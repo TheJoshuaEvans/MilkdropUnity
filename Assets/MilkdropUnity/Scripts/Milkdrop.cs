@@ -7,7 +7,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Globalization;
 
-namespace Milkstain
+namespace MilkdropUnity
 {
     public class Milkdrop : MonoBehaviour
     {

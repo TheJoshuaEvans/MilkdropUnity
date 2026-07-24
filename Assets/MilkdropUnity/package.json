@@ -1,7 +1,7 @@
 {
-  "name": "com.thejoshuaevans.milkstain",
+  "name": "com.thejoshuaevans.milkdropunity",
   "version": "0.1.0",
-  "displayName": "Milkstain (MilkDrop for Unity)",
+  "displayName": "MilkdropUnity",
   "description": "MilkDrop-compatible, Butterchurn-based audio visualizer for Unity, driven by any AudioSource. Fork of https://github.com/R-033/milkstain.",
   "unity": "2021.3",
   "dependencies": {

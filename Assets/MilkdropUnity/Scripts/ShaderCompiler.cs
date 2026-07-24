@@ -8,14 +8,14 @@ using System.Linq;
 using System.IO;
 using UnityEngine.Pool;
 
-namespace Milkstain
+namespace MilkdropUnity
 {
     public class ShaderCompiler : EditorWindow
     {
         [MenuItem ("GameObject/Add All Presets")]
         public static void AddAllPresets()
         {
-            FindObjectOfType<Milkdrop>().PresetFiles = Resources.FindObjectsOfTypeAll<TextAsset>().Where(x => x.text.StartsWith("MILKDROP") || x.text.StartsWith("[preset")).ToArray();
+            FindFirstObjectByType<Milkdrop>().PresetFiles = Resources.FindObjectsOfTypeAll<TextAsset>().Where(x => x.text.StartsWith("MILKDROP") || x.text.StartsWith("[preset")).ToArray();
         }
 
         [MenuItem ("Window/Milkdrop Shader Compiler")]
@@ -246,7 +246,7 @@ namespace Milkstain
 
                         string result = CompileShader(shaderName, presetData.Warp, warpTemplate);
 
-                        File.WriteAllText(Application.dataPath + "/Milkstain/Shaders/Warp/Custom/" + shaderName + ".shader", result);
+                        File.WriteAllText(Application.dataPath + "/MilkdropUnity/Shaders/Warp/Custom/" + shaderName + ".shader", result);
                     }
 
                     if (!string.IsNullOrEmpty(presetData.Comp))
@@ -255,7 +255,7 @@ namespace Milkstain
                         
                         string result = CompileShader(shaderName, presetData.Comp, compTemplate);
 
-                        File.WriteAllText(Application.dataPath + "/Milkstain/Shaders/Comp/Custom/" + shaderName + ".shader", result);
+                        File.WriteAllText(Application.dataPath + "/MilkdropUnity/Shaders/Comp/Custom/" + shaderName + ".shader", result);
                     }
                 }
 
@@ -266,8 +266,8 @@ namespace Milkstain
 
                 foreach (var preset in presets)
                 {
-                    var w = AssetDatabase.LoadAssetAtPath<Shader>("Assets/Milkstain/Shaders/Warp/Custom/" + preset.name + " - Warp" + ".shader");
-                    var c = AssetDatabase.LoadAssetAtPath<Shader>("Assets/Milkstain/Shaders/Comp/Custom/" + preset.name + " - Comp" + ".shader");
+                    var w = AssetDatabase.LoadAssetAtPath<Shader>("Assets/MilkdropUnity/Shaders/Warp/Custom/" + preset.name + " - Warp" + ".shader");
+                    var c = AssetDatabase.LoadAssetAtPath<Shader>("Assets/MilkdropUnity/Shaders/Comp/Custom/" + preset.name + " - Comp" + ".shader");
 
                     if (w != null)
                     {

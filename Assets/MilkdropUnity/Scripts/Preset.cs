@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace Milkstain
+namespace MilkdropUnity
 {
     public class Preset
     {

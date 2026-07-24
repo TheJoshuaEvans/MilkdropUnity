@@ -5,7 +5,7 @@ using System.Linq;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Milkstain
+namespace MilkdropUnity
 {
     public enum Var : int
     {

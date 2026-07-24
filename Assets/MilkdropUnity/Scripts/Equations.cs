@@ -7,7 +7,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Globalization;
 
-namespace Milkstain
+namespace MilkdropUnity
 {
     public class Equations
     {
@@ -18,7 +18,6 @@ namespace Milkstain
 
         public static Action<State> Compile(string code)
         {
-            bool x = false;
             return CompileEquation(TokenizeExpression(code), x => {});
         }
 
